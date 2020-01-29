@@ -28,14 +28,12 @@ public class 나무재테크_16235 {
 		int r;
 		int c;
 		int age;
-		boolean isDead;
 		
 		public Tree(int r, int c, int age) {
 			super();
 			this.r = r;
 			this.c = c;
 			this.age = age;
-			this.isDead = false;
 		}
 		
 		@Override
@@ -62,11 +60,11 @@ public class 나무재테크_16235 {
 		M = Integer.parseInt(st.nextToken());
 		K = Integer.parseInt(st.nextToken());
 		
-		map = new Ground[N][N];
+		map = new Ground[N+1][N+1];
 		
-		for (int i = 0; i < N; i++) {
+		for (int i = 1; i <= N; i++) {
 			st = new StringTokenizer(br.readLine());
-			for (int j = 0; j < N; j++) {
+			for (int j = 1; j <= N; j++) {
 				map[i][j] = new Ground(5, Integer.parseInt(st.nextToken()));
 			}
 		}
@@ -82,8 +80,8 @@ public class 나무재테크_16235 {
 		
 		for (int tc = 0; tc < K; tc++) {
 			//봄
-			for (int i = 0; i < N; i++) {
-				for (int j = 0; j < N; j++) {
+			for (int i = 1; i <= N; i++) {
+				for (int j = 1; j <= N; j++) {
 					while (!map[i][j].treeQueue.isEmpty()) {
 						Tree tree = map[i][j].treeQueue.poll();
 						if(map[i][j].energy >= tree.age) {
@@ -91,19 +89,62 @@ public class 나무재테크_16235 {
 							tree.age++;
 							tmpQ.add(tree);
 						}else {
-							tree.isDead = true;
 							deadQ.add(tree);
 						}
 						
 					}
 					map[i][j].treeQueue.addAll(tmpQ);
+					tmpQ.clear();
 				}
 			}
 			
 			//여름
 			while (!deadQ.isEmpty()) {
-				Tree tree = map[i][j].treeQueue
+				Tree tree = deadQ.poll();
+				map[tree.r][tree.c].energy += (int) (tree.age / 2);
+			}
+			
+			//가을
+			for (int i = 1; i <= N; i++) {
+				for (int j = 1; j <= N; j++) {
+					while (!map[i][j].treeQueue.isEmpty()) {
+						Tree tree = map[i][j].treeQueue.poll();
+						if(tree.age % 5 == 0) {
+							for (int k = 0; k < pos.length; k++) {
+								int nr = tree.r + pos[k][0];
+								int nc = tree.c + pos[k][1];
+								
+								if(posCheck(nr, nc)) {
+									map[nr][nc].treeQueue.add(new Tree(nr, nc, 1));
+								}
+							}
+						}
+						tmpQ.add(tree);
+					}
+					map[i][j].treeQueue.addAll(tmpQ);
+					tmpQ.clear();
+				}
+			}
+			
+			//겨울
+			for (int i = 1; i <= N; i++) {
+				for (int j = 1; j <= N; j++) {
+					map[i][j].energy += map[i][j].addEnergy;
+				}
 			}
 		}
+		
+		int ans = 0;
+		for (int i = 1; i <= N; i++) {
+			for (int j = 1; j <= N; j++) {
+				ans += map[i][j].treeQueue.size();
+			}
+		}
+		
+		System.out.println(ans);
+	}
+	
+	static boolean posCheck(int row, int col) {
+		return row >= 1 && row <= N && col >= 1 && col <= N;
 	}
 }
