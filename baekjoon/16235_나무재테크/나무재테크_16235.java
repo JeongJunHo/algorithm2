@@ -13,6 +13,7 @@ import java.util.StringTokenizer;
 public class 나무재테크_16235 {
 	static class Ground {
 		PriorityQueue<Tree> treeQueue;
+		Queue<Tree> tmpQ;
 		int energy;
 		int addEnergy;
 		
@@ -21,6 +22,7 @@ public class 나무재테크_16235 {
 			this.energy = energy;
 			this.addEnergy = addEnergy;
 			treeQueue = new PriorityQueue<Tree>();
+			tmpQ = new LinkedList<Tree>();
 		}
 	}
 	
@@ -49,8 +51,7 @@ public class 나무재테크_16235 {
 	//년수
 	static int K;
 	static Ground[][] map;
-	static Queue<Tree> tmpQ = new LinkedList<Tree>();
-	static Queue<Tree> deadQ = new LinkedList<Tree>();
+	static int[][] deadMap;
 	static int[][] pos = {{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}};
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -61,6 +62,7 @@ public class 나무재테크_16235 {
 		K = Integer.parseInt(st.nextToken());
 		
 		map = new Ground[N+1][N+1];
+		deadMap = new int[N+1][N+1];
 		
 		for (int i = 1; i <= N; i++) {
 			st = new StringTokenizer(br.readLine());
@@ -87,10 +89,22 @@ public class 나무재테크_16235 {
 						if(map[i][j].energy >= tree.age) {
 							map[i][j].energy -= tree.age;
 							tree.age++;
-							tmpQ.add(tree);
+							map[i][j].tmpQ.add(tree);
+							if(tree.age % 5 == 0) {
+								for (int k = 0; k < pos.length; k++) {
+									int nr = tree.r + pos[k][0];
+									int nc = tree.c + pos[k][1];
+									
+									if(posCheck(nr, nc)) {
+										map[nr][nc].tmpQ.add(new Tree(nr, nc, 1));
+									}
+								}
+							}
 						}else {
-							deadQ.add(tree);
+							deadMap[i][j] += (int) (tree.age / 2);
 						}
+					}
+					while (!map[i][j].tmpQ.isEmpty()) {
 						
 					}
 					map[i][j].treeQueue.addAll(tmpQ);
@@ -99,9 +113,10 @@ public class 나무재테크_16235 {
 			}
 			
 			//여름
-			while (!deadQ.isEmpty()) {
-				Tree tree = deadQ.poll();
-				map[tree.r][tree.c].energy += (int) (tree.age / 2);
+			for (int i = 1; i <= N; i++) {
+				for (int j = 1; j <= N; j++) {
+					map[i][j].energy += deadMap[i][j];
+				}
 			}
 			
 			//가을
