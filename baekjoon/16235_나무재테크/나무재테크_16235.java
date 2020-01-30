@@ -104,11 +104,6 @@ public class 나무재테크_16235 {
 							deadMap[i][j] += (int) (tree.age / 2);
 						}
 					}
-					while (!map[i][j].tmpQ.isEmpty()) {
-						
-					}
-					map[i][j].treeQueue.addAll(tmpQ);
-					tmpQ.clear();
 				}
 			}
 			
@@ -122,22 +117,10 @@ public class 나무재테크_16235 {
 			//가을
 			for (int i = 1; i <= N; i++) {
 				for (int j = 1; j <= N; j++) {
-					while (!map[i][j].treeQueue.isEmpty()) {
-						Tree tree = map[i][j].treeQueue.poll();
-						if(tree.age % 5 == 0) {
-							for (int k = 0; k < pos.length; k++) {
-								int nr = tree.r + pos[k][0];
-								int nc = tree.c + pos[k][1];
-								
-								if(posCheck(nr, nc)) {
-									map[nr][nc].treeQueue.add(new Tree(nr, nc, 1));
-								}
-							}
-						}
-						tmpQ.add(tree);
+					while (!map[i][j].tmpQ.isEmpty()) {
+						Tree tree = map[i][j].tmpQ.poll();
+						map[i][j].treeQueue.add(tree);
 					}
-					map[i][j].treeQueue.addAll(tmpQ);
-					tmpQ.clear();
 				}
 			}
 			
