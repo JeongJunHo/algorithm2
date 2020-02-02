@@ -109,8 +109,7 @@ public class 나무재테크_16235 {
 			//가을
 			for (int i = 1; i <= N; i++) {
 				for (int j = 1; j <= N; j++) {
-					for (Iterator iterator = map[i][j].treeList.iterator(); iterator.hasNext();) {
-						Tree tree = (Tree) iterator.next();
+					for (Tree tree : map[i][j].treeList) {
 						if(tree.age % 5 == 0) {
 							for (int k = 0; k < pos.length; k++) {
 								int nr = tree.r + pos[k][0];
